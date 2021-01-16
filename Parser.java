@@ -315,7 +315,7 @@ public class Parser {
             return Type.VOID;
         }
         Type type=E_0(func,table).type;
-        suppose(TokenType.SEMICOLON,206);
+        suppose(TokenType.SEMICOLON,5);
         advance();
         return type;
     }
@@ -325,7 +325,7 @@ public class Parser {
         advance();
         func.instructions.add(new Instruction("arga",0x0b,0));
         if(func.type!=expr_stmt(func,table)){
-            System.exit(222);
+            System.exit(5);
         }
 
     }

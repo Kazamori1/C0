@@ -83,9 +83,9 @@ abstract class Expression{
         ident(Token a,SymTable table,Variable func){
             this.x=table.getVarByName((String) a.tokenValue);
             if(x==null){
-                System.exit(177);
+                System.exit(5);
             }else if(x.isFunc==1){
-                System.exit(888);
+                System.exit(5);
             }
             else{
                 if(x.isGlobal==1){
