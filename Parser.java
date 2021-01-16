@@ -102,19 +102,19 @@ public class Parser {
     private void let_stmt(Variable func,SymTable table){
         System.out.println("let");
         advance();
-        suppose(TokenType.IDENT,201);
+        suppose(TokenType.IDENT,1);
         String name=(String) current().tokenValue;
         advance();
-        suppose(TokenType.COLON,201);
+        suppose(TokenType.COLON,1);
         advance();
-        suppose(TokenType.IDENT,201);
+        suppose(TokenType.IDENT,1);
         Type type=null;
         if(current().tokenValue.equals("int")){
             type=Type.INT;
         }else if(current().tokenValue.equals("double")){
             type=Type.DOUBLE;
         }else{
-            System.exit(201);
+            System.exit(1);
         }
         advance();
         if(table.ancestor==null){
@@ -137,7 +137,7 @@ public class Parser {
             }
             func.instructions.add(new Instruction("store64",0x17));
         }
-        suppose(TokenType.SEMICOLON,201);
+        suppose(TokenType.SEMICOLON,1);
         advance();
     }
 
