@@ -32,11 +32,11 @@ public class Output {
                 }
             }
             //ystem.out.println(num+" "+variable.instructions.size());
-            variable.loc_slots+=variable.param_slots;
+            //variable.loc_slots+=variable.param_slots;
             output.addAll(to_bytes(num,4));
             output.addAll(to_bytes(variable.ret_slots,4));
             output.addAll(to_bytes(variable.param_slots,4));
-            output.addAll(to_bytes(variable.loc_slots+variable.param_slots,4));
+            output.addAll(to_bytes(variable.loc_slots,4));
             output.addAll(to_bytes(variable.instructions.size(),4));
             System.out.println(variable.name+" "+variable.ret_slots+" "+variable.param_slots+" "+variable.loc_slots);
             for(Instruction instruction:variable.instructions){

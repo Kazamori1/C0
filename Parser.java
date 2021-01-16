@@ -251,7 +251,7 @@ public class Parser {
             new_func.instructions.add(new Instruction("load64",0x13));
             new_func.instructions.add(new Instruction("store64",0x17));
         }
-        //new_func.ret_slots=new_func.param_slots;
+        new_func.loc_slots=new_func.param_slots;
 
         suppose(TokenType.L_BRACE,2);
         block_stmt(new_func,new_table);
