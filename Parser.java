@@ -257,9 +257,9 @@ public class Parser {
         block_stmt(new_func,new_table);
         SymTable.globalTable.add(new_func);
         SymTable.funcTable.add(new_func);
-        if(new_func.ret_slots==1){
-            new_func.instructions.add(new Instruction("store64",0x17));
-        }
+//        if(new_func.ret_slots==1){
+//            new_func.instructions.add(new Instruction("store64",0x17));
+//        }
 
         new_func.instructions.add(new Instruction("ret",0x49));
 
