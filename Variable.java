@@ -66,7 +66,10 @@ abstract class Expression{
             }else if(val.tokenType==TokenType.DOUBLE_LITERAL){
                 this.type=Type.DOUBLE;
                 func.instructions.add(new Instruction("push",0x01,Double.doubleToRawLongBits((Double) val.tokenValue)));
-            }else {
+            }else if(val.tokenType==TokenType.CHAR_LITERAL){
+                this.type=Type.INT;
+                func.instructions.add(new Instruction("push",0x01,(char)val.tokenValue));
+            }else{
                 this.type=Type.INT;
                 func.instructions.add(new Instruction("push",0x01,Long.parseLong(val.tokenValue.toString())));
             }
