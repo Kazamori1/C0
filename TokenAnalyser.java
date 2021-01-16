@@ -275,7 +275,11 @@ public class TokenAnalyser {
         }
         tmp = text.substring(start, cur);
         TokenType tokenType = keyword.get(tmp);
-        tokens.add(new Token(Objects.requireNonNullElse(tokenType, TokenType.IDENT), tmp));
+        if(tokenType==null){
+            tokens.add(new Token(TokenType.IDENT, tmp));
+        }else{
+            tokens.add(new Token(tokenType,tmp));
+        }
     }
 
     private boolean isDigit(char c) {
