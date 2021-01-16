@@ -132,7 +132,9 @@ public class Parser {
         }
         if(isMatch(TokenType.ASSIGN)){
             advance();
-            E_0(func,table);
+            if(type!=E_0(func,table).type){
+                System.exit(333);
+            }
             func.instructions.add(new Instruction("store64",0x17));
         }
         suppose(TokenType.SEMICOLON,201);
@@ -306,22 +308,26 @@ public class Parser {
         block_stmt(func,new SymTable(table));
     }
 
-    private void expr_stmt(Variable func,SymTable table){
+    private Type expr_stmt(Variable func,SymTable table){
         System.out.println("expr");
         if(isMatch(TokenType.SEMICOLON)){
             empty_stmt(func, table);
-            return;
+            return Type.VOID;
         }
-        E_0(func,table);
+        Type type=E_0(func,table).type;
         suppose(TokenType.SEMICOLON,206);
         advance();
+        return type;
     }
 
     private void return_stmt(Variable func,SymTable table){
         System.out.println("return");
         advance();
         func.instructions.add(new Instruction("arga",0x0b,0));
-        expr_stmt(func,table);
+        if(func.type!=expr_stmt(func,table)){
+            System.exit(222);
+        }
+
     }
 
     private void block_stmt(Variable func,SymTable table){
