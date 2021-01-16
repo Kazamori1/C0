@@ -378,7 +378,7 @@ public class Parser {
             if(tmp.type==expr.type&&tmp.isFunc==0&&tmp.isCon==0){
                 func.instructions.add(new Instruction("store64",0x17));
             }else{
-                System.exit(900);
+                System.exit(210);
             }
             return new Expression.assign_expr();
         }
