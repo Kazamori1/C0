@@ -184,10 +184,10 @@ public class Parser {
         //Variable new_func=new Variable();
         System.out.println("fn");
         advance();
-        suppose(TokenType.IDENT,203);
+        suppose(TokenType.IDENT,2);
         String name=(String) current().tokenValue;
         advance();
-        suppose(TokenType.L_PAREN,203);
+        suppose(TokenType.L_PAREN,2);
         advance();
         List<Param> x=new ArrayList<>();
         SymTable new_table=new SymTable(table);
@@ -197,12 +197,12 @@ public class Parser {
                 isCon=1;
                 advance();
             }
-            suppose(TokenType.IDENT,203);
+            suppose(TokenType.IDENT,2);
             String name_p=(String) current().tokenValue;
             advance();
-            suppose(TokenType.COLON,203);
+            suppose(TokenType.COLON,2);
             advance();
-            suppose(TokenType.IDENT,203);
+            suppose(TokenType.IDENT,2);
             if(current().tokenValue.equals("int")){
                 x.add(new Param(Type.INT,isCon));
                 new_table.addVar(new Variable(name_p,Type.INT,new_table.vars.size(),isCon,0,0));
@@ -210,19 +210,19 @@ public class Parser {
                 x.add(new Param(Type.DOUBLE,isCon));
                 new_table.addVar(new Variable(name_p,Type.DOUBLE,new_table.vars.size(),isCon,0,0));
             }else{
-                System.exit(203);
+                System.exit(2);
             }
             advance();
             if(!isMatch(TokenType.R_PAREN)){
-                suppose(TokenType.COMMA,203);
+                suppose(TokenType.COMMA,2);
                 advance();
             }
         }
-        suppose(TokenType.R_PAREN,203);
+        suppose(TokenType.R_PAREN,2);
         advance();
-        suppose(TokenType.ARROW,203);
+        suppose(TokenType.ARROW,2);
         advance();
-        suppose(TokenType.IDENT,203);
+        suppose(TokenType.IDENT,2);
         Variable new_func=null;
         if(current().tokenValue.equals("int")){
             new_func=new Variable(name,Type.INT,table.vars.size(),1,1,1);
@@ -237,7 +237,7 @@ public class Parser {
             new_func.params=x;
             new_func.ret_slots=0;
         } else{
-            System.exit(203);
+            System.exit(2);
         }
         if(!table.addVar(new_func)){
             System.exit(303);
@@ -253,7 +253,7 @@ public class Parser {
         }
         //new_func.ret_slots=new_func.param_slots;
 
-        suppose(TokenType.L_BRACE,203);
+        suppose(TokenType.L_BRACE,2);
         block_stmt(new_func,new_table);
         SymTable.globalTable.add(new_func);
         SymTable.funcTable.add(new_func);
@@ -378,7 +378,7 @@ public class Parser {
             if(tmp.type==expr.type&&tmp.isFunc==0&&tmp.isCon==0){
                 func.instructions.add(new Instruction("store64",0x17));
             }else{
-                System.exit(210);
+                System.exit(2);
             }
             return new Expression.assign_expr();
         }
