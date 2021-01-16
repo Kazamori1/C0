@@ -260,7 +260,9 @@ public class Parser {
         if(new_func.ret_slots==1){
             new_func.instructions.add(new Instruction("store64",0x17));
         }
+
         new_func.instructions.add(new Instruction("ret",0x49));
+
     }
 
     private void stmt(Variable func,SymTable table){
@@ -287,25 +289,49 @@ public class Parser {
     private void if_stmt(Variable func,SymTable table){
         System.out.println("if");
         advance();
-        E_0(func,table);
+        Expression tmp=E_0(func,table);
+        func.instructions.add(new Instruction("brF",0x42,0));
+        int id=func.instructions.size();
         suppose(TokenType.L_BRACE,204);
         block_stmt(func,new SymTable(table));
         if(isMatch(TokenType.ELSE_KW)){
             advance();
+            func.instructions.add(new Instruction("br",0x41,0));
+            int id_2=func.instructions.size();
+            func.instructions.get(id-1).param_y=id_2-id;
             if(isMatch(TokenType.L_BRACE)){
                 block_stmt(func,new SymTable(table));
             }else if(isMatch(TokenType.IF_KW)){
                 if_stmt(func, table);
+            }else{
+                System.exit(6);
             }
+            func.instructions.add(new Instruction("nop",0x00));
+            int id_3=func.instructions.size();
+            func.instructions.get(id_2-1).param_y=id_3-id_2;
+        }else{
+            func.instructions.add(new Instruction("nop",0x00));
+            int id_4=func.instructions.size();
+            func.instructions.get(id-1).param_y=id_4-id;
         }
     }
 
     private void while_stmt(Variable func,SymTable table){
         System.out.println("while");
         advance();
-        E_0(func,table);
+        func.instructions.add(new Instruction("nop",0x00));
+        int start=func.instructions.size();
+        Expression tmp=E_0(func,table);
+        func.instructions.add(new Instruction("brT",0x43,1));
+        func.instructions.add(new Instruction("br",0x41,0));
+        int id=func.instructions.size();
         suppose(TokenType.L_BRACE,205);
         block_stmt(func,new SymTable(table));
+        int end=func.instructions.size();
+        func.instructions.add(new Instruction("br",0x41,start-end-2));
+        func.instructions.add(new Instruction("nop",0x00));
+        end++;
+        func.instructions.get(id-1).param_y=end-id+1;
     }
 
     private Type expr_stmt(Variable func,SymTable table){
@@ -327,7 +353,10 @@ public class Parser {
         if(func.type!=expr_stmt(func,table)){
             System.exit(5);
         }
-
+        if(func.ret_slots==1){
+            func.instructions.add(new Instruction("store64",0x17));
+        }
+        func.instructions.add(new Instruction("ret",0x49));
     }
 
     private void block_stmt(Variable func,SymTable table){
@@ -392,26 +421,31 @@ public class Parser {
             advance();
             Expression right=E_2(func,table);
             expr=new Expression.binary(expr,tmp,right);
-            func.instructions.add(new Instruction("cmpi",0x30));
+            if(expr.type==Type.INT)
+                func.instructions.add(new Instruction("cmpi",0x30));
+            else if(expr.type==Type.DOUBLE)
+                func.instructions.add(new Instruction("cmpf",0x32));
+            else
+                System.exit(2);
             if(tmp.tokenType==TokenType.GT){
                 func.instructions.add(new Instruction("setgt",0x3a));
-                func.instructions.add(new Instruction("popn",0x03,1));
             }
             if(tmp.tokenType==TokenType.LT){
                 func.instructions.add(new Instruction("setlt",0x39));
-                func.instructions.add(new Instruction("popn",0x03,1));
             }
             if(tmp.tokenType==TokenType.GE){
                 func.instructions.add(new Instruction("setlt",0x39));
+                func.instructions.add(new Instruction("not",0x2e));;
+            }
+            if(tmp.tokenType==TokenType.LE){
+                func.instructions.add(new Instruction("setgt",0x3a));
                 func.instructions.add(new Instruction("not",0x2e));
-                func.instructions.add(new Instruction("popn",0x03,1));
             }
             if(tmp.tokenType==TokenType.EQ){
                 func.instructions.add(new Instruction("not",0x2e));
-                func.instructions.add(new Instruction("popn",0x03,1));
             }
             if(tmp.tokenType==TokenType.NEQ){
-                func.instructions.add(new Instruction("popn",0x03,1));
+
             }
         }
         return expr;
