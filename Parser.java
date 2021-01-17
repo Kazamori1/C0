@@ -71,7 +71,10 @@ public class Parser {
             for(Instruction ins:var.instructions){
                 if(ins.param_y!=-500){
                     System.out.println(ins.name+" "+ins.param_y);
-                }else{
+                }else if(ins.param_x!=-500.0){
+                    System.out.println(ins.name+" "+ins.param_x);
+                }
+                else{
                     System.out.println(ins.name);
                 }
             }

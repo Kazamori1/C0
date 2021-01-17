@@ -42,7 +42,10 @@ public class Output {
             for(Instruction instruction:variable.instructions){
                 if(instruction.id==0x01){
                     output.addAll(to_bytes(instruction.id,1));
-                    output.addAll(to_bytes(instruction.param_y,8));
+                    if(instruction.param_y!=-500)
+                        output.addAll(to_bytes(instruction.param_y,8));
+                    else
+                        output.addAll(double_to_bytes(instruction.param_x));
                 }else if(instruction.param_y!=-500){
                     output.addAll(to_bytes(instruction.id,1));
                     output.addAll(to_bytes(instruction.param_y,4));

@@ -65,7 +65,7 @@ abstract class Expression{
                 SymTable.globalTable.add(new Variable((String) val.tokenValue,Type.STRING,SymTable.globalTable.size(),1,0,1));
             }else if(val.tokenType==TokenType.DOUBLE_LITERAL){
                 this.type=Type.DOUBLE;
-                func.instructions.add(new Instruction("push",0x01,Double.doubleToRawLongBits((Double) val.tokenValue)));
+                func.instructions.add(new Instruction("push",0x01,(double)val.tokenValue));
             }else if(val.tokenType==TokenType.CHAR_LITERAL){
                 this.type=Type.INT;
                 func.instructions.add(new Instruction("push",0x01,(char)val.tokenValue));
