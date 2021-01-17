@@ -10,19 +10,21 @@ public class Variable {
     int isCon;
     int isFunc;
     int isGlobal;
+    int isParam;
     int ret_slots;
     int param_slots;
     int loc_slots;
     int body_count;
     List<Instruction> instructions;
     List<Param> params;
-    Variable(String name,Type type,int no,int isCon,int isFunc,int isGlobal){
+    Variable(String name,Type type,int no,int isCon,int isFunc,int isGlobal,int isParam){
         this.name=name;
         this.type=type;
         this.no=no;
         this.isCon=isCon;
         this.isFunc=isFunc;
         this.isGlobal=isGlobal;
+        this.isParam=isParam;
         this.val=0;
         this.ret_slots=0;
         this.loc_slots=0;
@@ -62,7 +64,7 @@ abstract class Expression{
             this.val=val;
             if(val.tokenType==TokenType.STRING_LITERAL){
                 this.type=Type.STRING;
-                SymTable.globalTable.add(new Variable((String) val.tokenValue,Type.STRING,SymTable.globalTable.size(),1,0,1));
+                SymTable.globalTable.add(new Variable((String) val.tokenValue,Type.STRING,SymTable.globalTable.size(),1,0,1,0));
             }else if(val.tokenType==TokenType.DOUBLE_LITERAL){
                 this.type=Type.DOUBLE;
                 func.instructions.add(new Instruction("push",0x01,(double)val.tokenValue));
@@ -93,8 +95,10 @@ abstract class Expression{
             else{
                 if(x.isGlobal==1){
                     func.instructions.add(new Instruction("globa",0x0c,x.no));
-                }else{
+                }else if(x.isParam==0){
                     func.instructions.add(new Instruction("loca",0x0a,x.no));
+                }else{
+                    func.instructions.add(new Instruction("arga",0x0b,x.no));
                 }
                 func.instructions.add(new Instruction("load64",0x13));
                 this.type=x.type;

@@ -49,7 +49,7 @@ public class Parser {
     }
 
     public void startP(String dest) throws IOException {
-        Variable func=new Variable("_start",Type.VOID,0,1,1,1);
+        Variable func=new Variable("_start",Type.VOID,0,1,1,1,0);
         SymTable table=new SymTable();
         SymTable init_table=table;
         table.addVar(func);
@@ -121,14 +121,14 @@ public class Parser {
         }
         advance();
         if(table.ancestor==null){
-            Variable tmp=new Variable(name,type,table.vars.size(),0,0,1);
+            Variable tmp=new Variable(name,type,table.vars.size(),0,0,1,0);
             if(!table.addVar(tmp)){
                 System.exit(301);
             }
             SymTable.globalTable.add(tmp);
             func.instructions.add(new Instruction("globa",0x0c,table.vars.size()-1));
         }else{
-            if(!table.addVar(new Variable(name,type,func.loc_slots,0,0,0))){
+            if(!table.addVar(new Variable(name,type,func.loc_slots,0,0,0,0))){
                 System.exit(301);
             }
             func.instructions.add(new Instruction("loca",0x0a,func.loc_slots++));
@@ -163,14 +163,14 @@ public class Parser {
         }
         advance();
         if(table.ancestor==null){
-            Variable tmp=new Variable(name,type,table.vars.size(),1,0,1);
+            Variable tmp=new Variable(name,type,table.vars.size(),1,0,1,0);
             if(!table.addVar(tmp)){
                 System.exit(302);
             }
             SymTable.globalTable.add(tmp);
             func.instructions.add(new Instruction("globa",0x0c,table.vars.size()-1));
         }else{
-            if(!table.addVar(new Variable(name,type,table.vars.size(),1,0,0))){
+            if(!table.addVar(new Variable(name,type,table.vars.size(),1,0,0,0))){
                 System.exit(302);
             }
             func.instructions.add(new Instruction("loca",0x0a,func.loc_slots++));
@@ -208,10 +208,10 @@ public class Parser {
             suppose(TokenType.IDENT,2);
             if(current().tokenValue.equals("int")){
                 x.add(new Param(Type.INT,isCon));
-                new_table.addVar(new Variable(name_p,Type.INT,new_table.vars.size(),isCon,0,0));
+                new_table.addVar(new Variable(name_p,Type.INT,new_table.vars.size()+1,isCon,0,0,1));
             }else if(current().tokenValue.equals("double")){
                 x.add(new Param(Type.DOUBLE,isCon));
-                new_table.addVar(new Variable(name_p,Type.DOUBLE,new_table.vars.size(),isCon,0,0));
+                new_table.addVar(new Variable(name_p,Type.DOUBLE,new_table.vars.size()+1,isCon,0,0,1));
             }else{
                 System.exit(2);
             }
@@ -228,15 +228,15 @@ public class Parser {
         suppose(TokenType.IDENT,2);
         Variable new_func=null;
         if(current().tokenValue.equals("int")){
-            new_func=new Variable(name,Type.INT,table.vars.size(),1,1,1);
+            new_func=new Variable(name,Type.INT,table.vars.size(),1,1,1,0);
             new_func.params=x;
             new_func.ret_slots=1;
         }else if(current().tokenValue.equals("double")){
-            new_func=new Variable(name,Type.DOUBLE,table.vars.size(),1,1,1);
+            new_func=new Variable(name,Type.DOUBLE,table.vars.size(),1,1,1,0);
             new_func.params=x;
             new_func.ret_slots=1;
         }else if(current().tokenValue.equals("void")){
-            new_func=new Variable(name,Type.VOID,table.vars.size(),1,1,1);
+            new_func=new Variable(name,Type.VOID,table.vars.size(),1,1,1,0);
             new_func.params=x;
             new_func.ret_slots=0;
         } else{
@@ -248,13 +248,7 @@ public class Parser {
         advance();
         new_func.param_slots=new_table.vars.size();
 
-        for(int i=1;i<=new_table.vars.size();i++){
-            new_func.instructions.add(new Instruction("loca",0x0a,i-1));
-            new_func.instructions.add(new Instruction("arga",0x0b,i-1+new_func.ret_slots));
-            new_func.instructions.add(new Instruction("load64",0x13));
-            new_func.instructions.add(new Instruction("store64",0x17));
-        }
-        new_func.loc_slots=new_func.param_slots;
+        new_func.loc_slots=0;
 
         suppose(TokenType.L_BRACE,2);
         block_stmt(new_func,new_table);
@@ -402,7 +396,10 @@ public class Parser {
         if(current().tokenType==TokenType.IDENT&&next().tokenType==TokenType.ASSIGN){
             Variable tmp=table.getVarByName((String)current().tokenValue);
             if(tmp.isGlobal==0)
-                func.instructions.add(new Instruction("loca",0x0a,tmp.no));
+                if(tmp.isParam==0)
+                    func.instructions.add(new Instruction("loca",0x0a,tmp.no));
+                else
+                    func.instructions.add(new Instruction("arga",0x0b,tmp.no));
             else
                 func.instructions.add(new Instruction("globa",0x0c,tmp.no));
             advance();
