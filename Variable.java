@@ -98,7 +98,7 @@ abstract class Expression{
                 }else if(x.isParam==0){
                     func.instructions.add(new Instruction("loca",0x0a,x.no));
                 }else{
-                    func.instructions.add(new Instruction("arga",0x0b,x.no));
+                    func.instructions.add(new Instruction("arga",0x0b,x.no+func.ret_slots));
                 }
                 func.instructions.add(new Instruction("load64",0x13));
                 this.type=x.type;

@@ -208,10 +208,10 @@ public class Parser {
             suppose(TokenType.IDENT,2);
             if(current().tokenValue.equals("int")){
                 x.add(new Param(Type.INT,isCon));
-                new_table.addVar(new Variable(name_p,Type.INT,new_table.vars.size()+1,isCon,0,0,1));
+                new_table.addVar(new Variable(name_p,Type.INT,new_table.vars.size(),isCon,0,0,1));
             }else if(current().tokenValue.equals("double")){
                 x.add(new Param(Type.DOUBLE,isCon));
-                new_table.addVar(new Variable(name_p,Type.DOUBLE,new_table.vars.size()+1,isCon,0,0,1));
+                new_table.addVar(new Variable(name_p,Type.DOUBLE,new_table.vars.size(),isCon,0,0,1));
             }else{
                 System.exit(2);
             }
@@ -399,7 +399,7 @@ public class Parser {
                 if(tmp.isParam==0)
                     func.instructions.add(new Instruction("loca",0x0a,tmp.no));
                 else
-                    func.instructions.add(new Instruction("arga",0x0b,tmp.no));
+                    func.instructions.add(new Instruction("arga",0x0b,tmp.no+ func.ret_slots));
             else
                 func.instructions.add(new Instruction("globa",0x0c,tmp.no));
             advance();
