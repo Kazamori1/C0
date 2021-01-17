@@ -264,10 +264,7 @@ public class TokenAnalyser {
         if (tmp.contains(".")) {
             tokens.add(new Token(TokenType.DOUBLE_LITERAL, Double.parseDouble(tmp)));
         } else {
-            if(tmp.equals("281474976710656"))
-                tokens.add(new Token(TokenType.DOUBLE_LITERAL, Double.parseDouble(tmp)));
-            else
-                tokens.add(new Token(TokenType.UINT_LITERAL, Integer.parseInt(tmp)));
+                tokens.add(new Token(TokenType.UINT_LITERAL, Long.parseLong(tmp)));
         }
     }
 
