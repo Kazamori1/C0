@@ -260,9 +260,10 @@ public class Parser {
 //        if(new_func.ret_slots==1){
 //            new_func.instructions.add(new Instruction("store64",0x17));
 //        }
-
-        new_func.instructions.add(new Instruction("ret",0x49));
-
+        if(new_func.ret_slots==0)
+            new_func.instructions.add(new Instruction("ret",0x49));
+        else
+            new_func.instructions.add(new Instruction("nop",0x00));
     }
 
     private void stmt(Variable func,SymTable table){
