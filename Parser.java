@@ -4,12 +4,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 public class Parser {
     private final List<Token> tokens;
     private int cur=0;
+    static Stack<Integer> while_p=new Stack<Integer>();
     Parser(List<Token> tokens){
         this.tokens=tokens;
+        //while_p.push(-1);
     }
 
     private Token current(){
@@ -47,7 +50,6 @@ public class Parser {
         }
         return false;
     }
-
     public void startP(String dest) throws IOException {
         Variable func=new Variable("_start",Type.VOID,0,1,1,1,0);
         SymTable table=new SymTable();
@@ -319,6 +321,7 @@ public class Parser {
         advance();
         func.instructions.add(new Instruction("nop",0x00));
         int start=func.instructions.size();
+        while_p.push(start);
         Expression tmp=E_0(func,table);
         func.instructions.add(new Instruction("brT",0x43,1));
         func.instructions.add(new Instruction("br",0x41,0));
@@ -330,6 +333,12 @@ public class Parser {
         func.instructions.add(new Instruction("nop",0x00));
         end++;
         func.instructions.get(id-1).param_y=end-id+1;
+        for(int i=0;i<func.instructions.size();i++){
+            if(func.instructions.get(i).id==0x41&&func.instructions.get(i).param_y==10000){
+                func.instructions.get(i).param_y=end-i;
+            }
+        }
+        while_p.pop();
     }
 
     private Type expr_stmt(Variable func,SymTable table){
@@ -378,6 +387,7 @@ public class Parser {
         advance();
         suppose(TokenType.SEMICOLON,208);
         advance();
+        func.instructions.add(new Instruction("br",0x41,10000));
     }
 
     private void continue_stmt(Variable func,SymTable table){
@@ -385,6 +395,11 @@ public class Parser {
         advance();
         suppose(TokenType.SEMICOLON,209);
         advance();
+        int x=func.instructions.size();
+        if(while_p.empty())
+            System.exit(-1);
+        else
+            func.instructions.add(new Instruction("br",0x41,while_p.peek()-x-1));
     }
 
 
